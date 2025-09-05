@@ -1,4 +1,4 @@
-FROM python:3.12-slim AS python-base
+FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -11,7 +11,11 @@ ENV PYTHONUNBUFFERED=1 \
     PATH="/opt/poetry/bin:$PATH"
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
-        curl build-essential libpq-dev gcc libc-dev \
+        curl \
+        build-essential \
+        libpq-dev \
+        gcc \
+        libc-dev \
     && curl -sSL https://install.python-poetry.org | python3 - \
     && poetry --version \
     && apt-get purge --auto-remove -y build-essential \
@@ -19,12 +23,17 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
 COPY poetry.lock pyproject.toml ./
 
 RUN poetry install --only main
 
 COPY . .
 
+RUN adduser --disabled-password --gecos '' appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
 EXPOSE 8000
 
-CMD ["poetry", "run", "python", "manage.py", "runserver", "${HOST:-127.0.0.1}:${PORT:-8000}"]
+CMD ["sh", "-c", "poetry run python manage.py runserver 0.0.0.0:${PORT:-8000}"]
