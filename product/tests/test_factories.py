@@ -3,6 +3,7 @@ from product.factories import CategoryFactory
 
 
 class TestCategoryFactory:
+    @pytest.mark.django_db
     def test_create_category(self):
         category = CategoryFactory.create()
 
