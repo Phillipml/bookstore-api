@@ -1,8 +1,8 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import (
-    SessionAuthentication, 
+    SessionAuthentication,
     BasicAuthentication,
-    TokenAuthentication
+    TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
 
@@ -12,9 +12,9 @@ from order.serializers import OrderSerializer
 
 class OrderViewSet(ModelViewSet):
     authentication_classes = [
-        SessionAuthentication, 
+        SessionAuthentication,
         BasicAuthentication,
-        TokenAuthentication
+        TokenAuthentication,
     ]
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer

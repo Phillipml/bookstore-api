@@ -12,8 +12,8 @@ Esta API oferece funcionalidades básicas para uma livraria online:
 
 ## Requisitos do Sistema
 
-- Python 3.13 ou superior
-- Poetry (gerenciador de dependências)
+- Docker e Docker Compose
+- Make (opcional, para comandos simplificados)
 
 ## Como instalar e executar
 
@@ -23,27 +23,45 @@ git clone <url-do-repositorio>
 cd bookstore-api
 ```
 
-### 2. Instale as dependências
+### 2. Configure as variáveis de ambiente
 ```bash
-poetry install
+# Copie o arquivo de exemplo
+cp .env.example .env
+
+# Edite o arquivo .env com suas configurações (opcional)
+# Para desenvolvimento, os valores padrão já funcionam
 ```
 
-### 3. Configure o banco de dados
+### 3. Execute o setup completo
 ```bash
-poetry run python manage.py migrate
-```
+# Com Make (recomendado)
+make setup
 
-### 4. Crie um usuário administrador (opcional)
-```bash
-poetry run python manage.py createsuperuser
-```
-
-### 5. Execute o servidor
-```bash
-poetry run python manage.py runserver
+# Ou manualmente
+docker-compose build
+docker-compose up -d
+docker-compose exec web python manage.py migrate --noinput
 ```
 
 A API estará disponível em: `http://localhost:8000`
+
+## Comandos disponíveis
+
+```bash
+# Ver todos os comandos
+make help
+
+# Gerenciar containers
+make up      # Sobe containers
+make down    # Para containers
+make logs    # Mostra logs
+
+# Desenvolvimento
+make migrate # Executa migrações
+make shell   # Shell no container
+make test    # Executa testes
+make clean   # Limpa arquivos temporários
+```
 
 ## Como usar a API
 
