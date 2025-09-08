@@ -21,7 +21,6 @@ class TestProductViewSet(APITestCase):
         )
 
     def test_get_all_product(self):
-        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
         response = self.client.get(reverse("product-list", kwargs={"version": "v1"}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         product_data = json.loads(response.content)
@@ -30,7 +29,21 @@ class TestProductViewSet(APITestCase):
         self.assertEqual(product_data["results"][0]["price"], self.product.price)
         self.assertEqual(product_data["results"][0]["active"], self.product.active)
 
-    def test_create_product(self):
+    def test_create_product_without_auth(self):
+        category = CategoryFactory()
+        data = json.dumps(
+            {"title": "notebook", "price": 800.00, "categories_id": [category.id]}
+        )
+
+        response = self.client.post(
+            reverse("product-list", kwargs={"version": "v1"}),
+            data=data,
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_create_product_with_auth(self):
         category = CategoryFactory()
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
         data = json.dumps(
