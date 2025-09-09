@@ -15,47 +15,39 @@ jobs:
 
       - name: Instalar dependências
         run: |
-          sudo apt-get update && sudo apt-get install -y openssh-client rsync
+          sudo apt-get update && sudo apt-get install -y curl zip
 
-      - name: Configurar SSH
+      - name: Criar arquivo ZIP do projeto
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.PYTHONANYWHERE_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          chmod 700 ~/.ssh
-          ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
-          
-          # Debug: verificar se a chave foi criada corretamente
-          echo "SSH key file created:"
-          ls -la ~/.ssh/id_rsa
-          echo "First line of SSH key:"
-          head -1 ~/.ssh/id_rsa
-          
-      - name: Testar conexão SSH
-        run: |
-          echo "Testing SSH connection to ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com"
-          ssh -o StrictHostKeyChecking=no -o BatchMode=yes -i ~/.ssh/id_rsa ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com "echo 'SSH connection successful'"
+          zip -r bookstore-api.zip . -x "*.git*" "*__pycache__*" "*.pyc" "*.env*" "*venv*" "*.pytest_cache*"
 
-      - name: Copiar arquivos para PythonAnywhere via rsync
+      - name: Fazer upload via API do PythonAnywhere
         run: |
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -o IdentitiesOnly=yes" \
-            --exclude='.git' \
-            --exclude='__pycache__' \
-            --exclude='*.pyc' \
-            --exclude='.env' \
-            --exclude='venv' \
-            --exclude='.pytest_cache' \
-            . ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com:/home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api/
+          curl -X POST \
+            -u ${{ secrets.PYTHONANYWHERE_USERNAME }}:${{ secrets.PYTHONANYWHERE_API_TOKEN }} \
+            -F "file=@bookstore-api.zip" \
+            https://www.pythonanywhere.com/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/files/path/home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api.zip
 
-      - name: Rodar migrations no PythonAnywhere
+      - name: Extrair arquivos no PythonAnywhere
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com \
-          "cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api && source venv/bin/activate && python manage.py migrate"
+          curl -X POST \
+            -u ${{ secrets.PYTHONANYWHERE_USERNAME }}:${{ secrets.PYTHONANYWHERE_API_TOKEN }} \
+            -d "command=cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }} && unzip -o bookstore-api.zip -d bookstore-api && rm bookstore-api.zip" \
+            https://www.pythonanywhere.com/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/consoles/
 
-      - name: Collect static files
+      - name: Rodar migrations via API
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com \
-          "cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api && source venv/bin/activate && python manage.py collectstatic --noinput"
+          curl -X POST \
+            -u ${{ secrets.PYTHONANYWHERE_USERNAME }}:${{ secrets.PYTHONANYWHERE_API_TOKEN }} \
+            -d "command=cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api && source venv/bin/activate && python manage.py migrate" \
+            https://www.pythonanywhere.com/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/consoles/
+
+      - name: Collect static files via API
+        run: |
+          curl -X POST \
+            -u ${{ secrets.PYTHONANYWHERE_USERNAME }}:${{ secrets.PYTHONANYWHERE_API_TOKEN }} \
+            -d "command=cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api && source venv/bin/activate && python manage.py collectstatic --noinput" \
+            https://www.pythonanywhere.com/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/consoles/
 
       - name: Reload webapp via API
         run: |
