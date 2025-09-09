@@ -1,0 +1,35 @@
+name: Deploy to PythonAnywhere
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Copiar arquivos para PythonAnywhere via scp
+        run: |
+          sudo apt-get update && sudo apt-get install -y openssh-client
+          scp -r -o StrictHostKeyChecking=no . ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com:/home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api
+
+      - name: Rodar migrations no PythonAnywhere
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com \
+          "cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api && source venv/bin/activate && python manage.py migrate"
+
+      - name: Collect static files
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com \
+          "cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api && source venv/bin/activate && python manage.py collectstatic --noinput"
+
+      - name: Reload webapp via API
+        run: |
+          curl -X POST \
+          -u ${{ secrets.PYTHONANYWHERE_USERNAME }}:${{ secrets.PYTHONANYWHERE_API_TOKEN }} \
+          https://www.pythonanywhere.com/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/webapps/${{ secrets.PYTHONANYWHERE_DOMAIN }}/reload/
