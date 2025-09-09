@@ -22,11 +22,16 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.PYTHONANYWHERE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          chmod 700 ~/.ssh
           ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
+          
+      - name: Testar conexão SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no -o BatchMode=yes -i ~/.ssh/id_rsa ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com "echo 'SSH connection successful'"
 
       - name: Copiar arquivos para PythonAnywhere via rsync
         run: |
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -o IdentitiesOnly=yes" \
             --exclude='.git' \
             --exclude='__pycache__' \
             --exclude='*.pyc' \
@@ -37,12 +42,12 @@ jobs:
 
       - name: Rodar migrations no PythonAnywhere
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com \
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com \
           "cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api && source venv/bin/activate && python manage.py migrate"
 
       - name: Collect static files
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com \
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com \
           "cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api && source venv/bin/activate && python manage.py collectstatic --noinput"
 
       - name: Reload webapp via API
