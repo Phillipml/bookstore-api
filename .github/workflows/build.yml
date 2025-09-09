@@ -1,0 +1,48 @@
+name: CI/CD Pipeline
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    env:
+      SECRET_KEY: "django-insecure-ci-test-key-not-for-production"
+      DEBUG: "0"
+      DJANGO_ALLOWED_HOSTS: "localhost 127.0.0.1"
+      SQL_ENGINE: "django.db.backends.sqlite3"
+      SQL_DATABASE: "db.sqlite3"
+      SQL_USER: "user"
+      SQL_PASSWORD: "password"
+      SQL_HOST: "localhost"
+      SQL_PORT: "5432"
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+      
+    - name: Configurar Python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: Instalar Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        
+    - name: Instalar dependências
+      run: poetry install --no-interaction --no-ansi
+      
+    - name: Executar migrações
+      run: poetry run python manage.py migrate --noinput
+      
+    - name: Executar testes
+      run: poetry run pytest
+      
+    - name: Verificar formatação do código
+      run: poetry run black --check .
+      
+    - name: Verificar sintaxe Python
+      run: poetry run python -m py_compile manage.py

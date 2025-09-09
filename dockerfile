@@ -8,6 +8,7 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_VERSION=1.8.4 \
     POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_CACHE_DIR=/tmp/poetry_cache \
     PATH="/opt/poetry/bin:$PATH"
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -24,16 +25,19 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 WORKDIR /app
 
-COPY poetry.lock pyproject.toml ./
+COPY pyproject.toml poetry.lock ./
 
-RUN poetry install --only main
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-ansi \
+    && rm -rf $POETRY_CACHE_DIR
 
 COPY . .
 
 RUN adduser --disabled-password --gecos '' appuser && \
     chown -R appuser:appuser /app
+
 USER appuser
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "poetry run python manage.py runserver 0.0.0.0:${PORT:-8000}"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
