@@ -13,10 +13,27 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Copiar arquivos para PythonAnywhere via scp
+      - name: Instalar dependências
         run: |
-          sudo apt-get update && sudo apt-get install -y openssh-client
-          scp -r -o StrictHostKeyChecking=no . ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com:/home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api
+          sudo apt-get update && sudo apt-get install -y openssh-client rsync
+
+      - name: Configurar SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PYTHONANYWHERE_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
+
+      - name: Copiar arquivos para PythonAnywhere via rsync
+        run: |
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
+            --exclude='.git' \
+            --exclude='__pycache__' \
+            --exclude='*.pyc' \
+            --exclude='.env' \
+            --exclude='venv' \
+            --exclude='.pytest_cache' \
+            . ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com:/home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api/
 
       - name: Rodar migrations no PythonAnywhere
         run: |
