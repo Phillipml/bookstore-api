@@ -6,19 +6,23 @@ from django.http import JsonResponse
 import debug_toolbar.toolbar
 from rest_framework.authtoken.views import obtain_auth_token
 
+
 def home(request):
-    return JsonResponse({
-        "message": "Bookstore API",
-        "version": "1.0.0",
-        "endpoints": {
-            "products": "/bookstore/v1/product/",
-            "categories": "/bookstore/v1/category/",
-            "orders": "/bookstore/v1/order/",
-            "admin": "/admin/",
-            "api_token": "/api-token-auth/"
-        },
-        "documentation": "Use the browsable API interface for testing"
-    })
+    return JsonResponse(
+        {
+            "message": "Bookstore API",
+            "version": "1.0.0",
+            "endpoints": {
+                "products": "/bookstore/v1/product/",
+                "categories": "/bookstore/v1/category/",
+                "orders": "/bookstore/v1/order/",
+                "admin": "/admin/",
+                "api_token": "/api-token-auth/",
+            },
+            "documentation": "Use the browsable API interface for testing",
+        }
+    )
+
 
 urlpatterns = [
     path("", home, name="home"),
