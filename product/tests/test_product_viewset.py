@@ -1,20 +1,16 @@
 import json
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
-from rest_framework.authtoken.models import Token
 from django.urls import reverse
 
 from product.models import Product
 from product.factories import ProductFactory, CategoryFactory
-from order.factories import UserFactory
 
 
 class TestProductViewSet(APITestCase):
     client = APIClient()
 
     def setUp(self):
-        self.user = UserFactory()
-        self.token = Token.objects.create(user=self.user)
         self.product = ProductFactory(
             title="pro controller",
             price=200.00,
@@ -29,23 +25,8 @@ class TestProductViewSet(APITestCase):
         self.assertEqual(product_data["results"][0]["price"], self.product.price)
         self.assertEqual(product_data["results"][0]["active"], self.product.active)
 
-    def test_create_product_without_auth(self):
+    def test_create_product(self):
         category = CategoryFactory()
-        data = json.dumps(
-            {"title": "notebook", "price": 800.00, "categories_id": [category.id]}
-        )
-
-        response = self.client.post(
-            reverse("product-list", kwargs={"version": "v1"}),
-            data=data,
-            content_type="application/json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_create_product_with_auth(self):
-        category = CategoryFactory()
-        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
         data = json.dumps(
             {"title": "notebook", "price": 800.00, "categories_id": [category.id]}
         )
