@@ -1,0 +1,47 @@
+name: Deploy to PythonAnywhere
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+      
+    - name: Deploy to PythonAnywhere
+      uses: pythonanywhere/pa-deploy@v1
+      with:
+        username: ${{ secrets.PYTHONANYWHERE_USERNAME }}
+        api_token: ${{ secrets.PYTHONANYWHERE_API_TOKEN }}
+        domain: ${{ secrets.PYTHONANYWHERE_DOMAIN }}
+        source_directory: .
+        virtualenv_path: /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api/venv
+        python_version: 3.13
+        
+    - name: Run migrations
+      uses: pythonanywhere/pa-run-command@v1
+      with:
+        username: ${{ secrets.PYTHONANYWHERE_USERNAME }}
+        api_token: ${{ secrets.PYTHONANYWHERE_API_TOKEN }}
+        domain: ${{ secrets.PYTHONANYWHERE_DOMAIN }}
+        command: "cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api && source venv/bin/activate && python manage.py migrate"
+        
+    - name: Collect static files
+      uses: pythonanywhere/pa-run-command@v1
+      with:
+        username: ${{ secrets.PYTHONANYWHERE_USERNAME }}
+        api_token: ${{ secrets.PYTHONANYWHERE_API_TOKEN }}
+        domain: ${{ secrets.PYTHONANYWHERE_DOMAIN }}
+        command: "cd /home/${{ secrets.PYTHONANYWHERE_USERNAME }}/bookstore-api && source venv/bin/activate && python manage.py collectstatic --noinput"
+        
+    - name: Reload webapp
+      uses: pythonanywhere/pa-reload-webapp@v1
+      with:
+        username: ${{ secrets.PYTHONANYWHERE_USERNAME }}
+        api_token: ${{ secrets.PYTHONANYWHERE_API_TOKEN }}
+        domain: ${{ secrets.PYTHONANYWHERE_DOMAIN }}
