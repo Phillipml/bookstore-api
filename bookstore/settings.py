@@ -129,8 +129,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 5,
     "DEFAULT_RENDERER_CLASSES": [
-        "rest_framework.renderers.BrowsableAPIRenderer",
         "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.BasicAuthentication",
@@ -145,7 +145,9 @@ REST_FRAMEWORK = {
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-ci-test-key-not-for-production")
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", "django-insecure-ci-test-key-not-for-production"
+)
 
 DEBUG = int(os.environ.get("DEBUG", default=0))
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost 127.0.0.1").split(" ")

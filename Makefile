@@ -43,7 +43,7 @@ shell:
 
 test:
 	@echo "Executando testes..."
-	docker-compose exec web pytest
+	docker-compose exec web python -m pytest
 
 clean:
 	@echo "Limpando arquivos temporários..."
