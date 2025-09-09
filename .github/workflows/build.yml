@@ -4,6 +4,18 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
+    
+    env:
+      SECRET_KEY: "django-insecure-ci-test-key-not-for-production"
+      DEBUG: "0"
+      DJANGO_ALLOWED_HOSTS: "localhost 127.0.0.1"
+      SQL_ENGINE: "django.db.backends.sqlite3"
+      SQL_DATABASE: "db.sqlite3"
+      SQL_USER: "user"
+      SQL_PASSWORD: "password"
+      SQL_HOST: "localhost"
+      SQL_PORT: "5432"
+    
     steps:
     - name: Checkout código
       uses: actions/checkout@v4
@@ -22,18 +34,6 @@ jobs:
         
     - name: Instalar dependências
       run: poetry install --no-interaction --no-ansi
-      
-    - name: Configurar variáveis de ambiente para CI
-      run: |
-        echo "SECRET_KEY=django-insecure-ci-test-key-not-for-production" >> $GITHUB_ENV
-        echo "DEBUG=0" >> $GITHUB_ENV
-        echo "DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1" >> $GITHUB_ENV
-        echo "SQL_ENGINE=django.db.backends.sqlite3" >> $GITHUB_ENV
-        echo "SQL_DATABASE=db.sqlite3" >> $GITHUB_ENV
-        echo "SQL_USER=user" >> $GITHUB_ENV
-        echo "SQL_PASSWORD=password" >> $GITHUB_ENV
-        echo "SQL_HOST=localhost" >> $GITHUB_ENV
-        echo "SQL_PORT=5432" >> $GITHUB_ENV
       
     - name: Executar migrações
       run: poetry run python manage.py migrate --noinput
