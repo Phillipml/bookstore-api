@@ -25,8 +25,15 @@ jobs:
           chmod 700 ~/.ssh
           ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
           
+          # Debug: verificar se a chave foi criada corretamente
+          echo "SSH key file created:"
+          ls -la ~/.ssh/id_rsa
+          echo "First line of SSH key:"
+          head -1 ~/.ssh/id_rsa
+          
       - name: Testar conexão SSH
         run: |
+          echo "Testing SSH connection to ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com"
           ssh -o StrictHostKeyChecking=no -o BatchMode=yes -i ~/.ssh/id_rsa ${{ secrets.PYTHONANYWHERE_USERNAME }}@ssh.pythonanywhere.com "echo 'SSH connection successful'"
 
       - name: Copiar arquivos para PythonAnywhere via rsync
