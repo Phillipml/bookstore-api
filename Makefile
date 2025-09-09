@@ -16,6 +16,8 @@ setup:
 	@echo "Setup completo do projeto..."
 	docker-compose build
 	docker-compose up -d
+	@echo "Aguardando banco de dados inicializar..."
+	@timeout 10 >nul 2>&1 || echo "Aguardando..."
 	docker-compose exec web python manage.py migrate --noinput
 	@echo "Pronto! Acesse: http://localhost:8000"
 
