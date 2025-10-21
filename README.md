@@ -4,26 +4,43 @@ API REST completa para gerenciamento de livraria desenvolvida com Django e Djang
 
 ## ✨ Funcionalidades
 
-- **CRUD Completo**: Gerenciamento de produtos, categorias e pedidos
-- **API Versionada**: Suporte a múltiplas versões (v1, v2)
-- **Paginação Inteligente**: Performance otimizada com paginação automática
-- **Autenticação Múltipla**: Token, Session e Basic Authentication
-- **Containerização**: Deploy simplificado com Docker e Docker Compose
-- **Testes Automatizados**: Cobertura completa com pytest e Factory Boy
-- **Documentação Interativa**: Interface browsable da API
-- **Banco PostgreSQL**: Configuração robusta para produção
+### CRUD Completo:
+Gerenciamento de produtos, categorias e pedidos
+### API Versionada:
+Suporte a múltiplas versões (v1, v2)
+### Paginação Inteligente:
+Performance otimizada com paginação automática
+### Autenticação Múltipla:
+Token, Session e Basic Authentication
+### Containerização:
+Deploy simplificado com Docker e Docker Compose
+### Testes Automatizados:
+Cobertura completa com pytest e Factory Boy
+### Documentação Interativa:
+Interface browsable da API
+### Banco PostgreSQL:
+Configuração robusta para produção
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Django 5.2.5** - Framework web Python
-- **Django REST Framework 3.16.1** - API REST
-- **PostgreSQL 15** - Banco de dados
-- **Docker & Docker Compose** - Containerização
-- **Poetry** - Gerenciamento de dependências
-- **pytest** - Framework de testes
-- **Factory Boy** - Geração de dados para testes
-- **Gunicorn** - Servidor WSGI para produção
-- **WhiteNoise** - Servir arquivos estáticos
+### Django 5.2.5
+- Framework web Python
+### Django REST Framework 3.16.1
+- API REST
+### PostgreSQL 15
+- Banco de dados
+### Docker & Docker Compose
+- Containerização
+### Poetry
+- Gerenciamento de dependências
+### pytest
+- Framework de testes
+### Factory Boy
+- Geração de dados para testes
+### Gunicorn
+- Servidor WSGI para produção
+### WhiteNoise
+- Servir arquivos estáticos
 
 ## 🚀 Como Executar
 
@@ -52,9 +69,12 @@ docker-compose exec web python manage.py migrate --noinput
 ```
 
 3. **Acesse a API:**
-- **API:** http://localhost:8000/bookstore/v1/
-- **Admin:** http://localhost:8000/admin/
-- **Documentação:** http://localhost:8000/bookstore/v1/ (interface browsable)
+### API:
+http://localhost:8000/bookstore/v1/
+### Admin:
+http://localhost:8000/admin/
+### Documentação:
+http://localhost:8000/bookstore/v1/ (interface browsable)
 
 ## 📁 Estrutura do Projeto
 
@@ -81,20 +101,29 @@ bookstore-api/
 
 ## 🎯 Características Técnicas
 
-- **Arquitetura REST**: Endpoints padronizados e versionados
-- **ViewSets DRF**: Implementação eficiente de CRUD
-- **Serializers**: Validação e serialização de dados
-- **Paginação**: Performance otimizada com PageNumberPagination
-- **Autenticação**: Múltiplos métodos de autenticação
-- **Containerização**: Ambiente isolado e reproduzível
-- **Testes**: Cobertura completa com Factory Boy
-- **Health Checks**: Monitoramento de saúde dos containers
+### Arquitetura REST:
+Endpoints padronizados e versionados
+### ViewSets DRF:
+Implementação eficiente de CRUD
+### Serializers:
+Validação e serialização de dados
+### Paginação:
+Performance otimizada com PageNumberPagination
+### Autenticação:
+Múltiplos métodos de autenticação
+### Containerização:
+Ambiente isolado e reproduzível
+### Testes:
+Cobertura completa com Factory Boy
+### Health Checks:
+Monitoramento de saúde dos containers
 
 ## 📝 Uso da API
 
 ### Endpoints Principais
 
-**Base URL:** `http://localhost:8000/bookstore/v1/`
+**Base URL:
+`http://localhost:8000/bookstore/v1/`
 
 #### Produtos
 ```bash
@@ -221,7 +250,12 @@ Este projeto está sob a licença [MIT](LICENSE).
 
 ---
 
-**Desenvolvido por:** Phillip M. Lopes  
-**Email:** phillipmlopes@gmail.com  
-**LinkedIn:** [phillipmlopes](https://www.linkedin.com/in/phillipmlopes/)  
-**GitHub:** [Phillipml](https://github.com/Phillipml)
+**Desenvolvido por:**
+Phillip Menezes
+
+**Email:**
+contato.phillip.menezes@gmail.com  
+**LinkedIn:**
+[Phillip Menezes](https://www.linkedin.com/in/phillip-menezes-063a39227/)  
+**GitHub:**
+[Phillipml](https://github.com/Phillipml/)
