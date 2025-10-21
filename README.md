@@ -2,7 +2,7 @@
 
 API REST completa para gerenciamento de livraria desenvolvida com Django e Django REST Framework. Sistema robusto que demonstra as melhores práticas de desenvolvimento de APIs, incluindo versionamento, paginação, autenticação e containerização com Docker.
 
-## ✨ Funcionalidades
+# ✨ Funcionalidades
 
 ### CRUD Completo:
 Gerenciamento de produtos, categorias e pedidos
@@ -21,7 +21,7 @@ Interface browsable da API
 ### Banco PostgreSQL:
 Configuração robusta para produção
 
-## 🛠️ Tecnologias Utilizadas
+# 🛠️ Tecnologias Utilizadas
 
 ### Django 5.2.5
 - Framework web Python
@@ -42,7 +42,7 @@ Configuração robusta para produção
 ### WhiteNoise
 - Servir arquivos estáticos
 
-## 🚀 Como Executar
+# 🚀 Como Executar
 
 ### Pré-requisitos
 
@@ -76,7 +76,7 @@ http://localhost:8000/admin/
 ### Documentação:
 http://localhost:8000/bookstore/v1/ (interface browsable)
 
-## 📁 Estrutura do Projeto
+# 📁 Estrutura do Projeto
 
 ```
 bookstore-api/
@@ -99,7 +99,7 @@ bookstore-api/
 └── pytest.ini              # Configuração de testes
 ```
 
-## 🎯 Características Técnicas
+# 🎯 Características Técnicas
 
 ### Arquitetura REST:
 Endpoints padronizados e versionados
@@ -118,7 +118,7 @@ Cobertura completa com Factory Boy
 ### Health Checks:
 Monitoramento de saúde dos containers
 
-## 📝 Uso da API
+# 📝 Uso da API
 
 ### Endpoints Principais
 
@@ -177,7 +177,7 @@ curl -X POST http://localhost:8000/bookstore/v1/product/ \
   }'
 ```
 
-## 🔧 Comandos Úteis
+# 🔧 Comandos Úteis
 
 ```bash
 # Ver todos os comandos disponíveis
@@ -195,7 +195,7 @@ make test    # Executa testes
 make clean   # Limpa arquivos temporários
 ```
 
-## 🧪 Testes
+# 🧪 Testes
 
 Execute os testes com pytest:
 
@@ -210,7 +210,7 @@ docker-compose exec web python -m pytest
 docker-compose exec web python -m pytest --cov=.
 ```
 
-## 📊 Estrutura dos Dados
+# 📊 Estrutura dos Dados
 
 ### Produto
 ```json
@@ -244,7 +244,7 @@ docker-compose exec web python -m pytest --cov=.
 }
 ```
 
-## 📄 Licença
+# 📄 Licença
 
 Este projeto está sob a licença [MIT](LICENSE).
 
